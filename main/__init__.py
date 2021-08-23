@@ -139,12 +139,12 @@ class Functions:
 
 	def create_csv(self, df: pd.DataFrame, file_name: str):
 		id = github_api.get_user_id()
+
 		options = {"1": f"{id}_follower_info.csv", "2": f"{id}_stargazers_info.csv", "3": f"{id}_following.csv"}
 
 		def path():
 			return os.path.join(os.getcwd(), options.get(file_name))
-
-		a = pd.read_csv(options.get(path()))
+		a = pd.read_csv(fr"{path()}")
 		a = a.sort_values(by="id")
 		df = df.fillna(0)
 		df = df.sort_values(by="id")
@@ -181,13 +181,13 @@ class Main_Menu:
 		def __init__(self):
 
 			self.secenek = {
-				"1": functions.create_csv(functions.github_data_csv(),"1"),
-				"2": functions.create_csv(functions.star(),"2"),
-				"3": functions.create_csv(functions.bahadir_following_csv(),"3"),
+				"1": lambda :functions.create_csv(functions.github_data_csv(),"1"),
+				"2": lambda :functions.create_csv(functions.star(),"2"),
+				"3": lambda :functions.create_csv(functions.bahadir_following_csv(),"3"),
 				"q": self.quit
 			}
 
-		def menu_goster(self, ):
+		def menu_goster(self):
 			print("""
 menu
 1.followers
