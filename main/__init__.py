@@ -144,46 +144,57 @@ class Functions:
 
 		def path():
 			return os.path.join(os.getcwd(), options.get(file_name))
+
 		a = pd.read_csv(fr"{path()}")
 		a = a.sort_values(by="id")
 		df = df.fillna(0)
 		df = df.sort_values(by="id")
 		if df.equals(a):
-			print("same")
+			print("no new followers")
 		elif pd.concat([a, df]).drop_duplicates(keep=False).empty:
-			print("same")
+			print("no new followers")
 		else:
 			df1 = pd.concat([a, df]).drop_duplicates(keep=False)
-			print(df1)
-			print("differencei")
+			print(df1, "difference", sep="\n")
+
+	def most_star(self):
+		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
+		for i in github_api.get_api_star_info():
+			for j in i.get_stargazers_with_dates():
+				df = df.append({
+					"id": j.user.id,
+					"user_name": j.user.login,
+					"repo_name": i.name
+				}, ignore_index=True)
+
+		return df.groupby("user_name").count()["id"].sort_values(ascending=False)
+
+	def most_starred_repo(self):
+		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
+		for i in github_api.get_api_star_info():
+			for j in i.get_stargazers_with_dates():
+				df = df.append({
+					"id": j.user.id,
+					"user_name": j.user.login,
+					"repo_name": i.name
+				}, ignore_index=True)
+
+		return df.groupby("repo_name").count()["id"].sort_values(ascending=False)
 
 
 functions = Functions()
-
-
-# bahadir_csv_path = os.path.join(os.getcwd(), "bahadir.csv")
-#
-# github_data_csv_path = os.path.join(os.getcwd(), "github_data.csv")
-#
-# bahadir_following_csv_path = os.path.join(os.getcwd(), "following.csv")
-#
-# bahadir_star_info = os.path.join(os.getcwd(), "star_info.csv")
-#
-# create_csv(bahdir_csv(), bahadir_csv_path)
-# create_csv(github_data_csv(), github_data_csv_path)
-# create_csv(bahadir_following_csv(), bahadir_following_csv_path)
-# create_csv(star(), bahadir_star_info)
 
 
 class Main_Menu:
 	try:
 
 		def __init__(self):
-
 			self.secenek = {
-				"1": lambda :functions.create_csv(functions.github_data_csv(),"1"),
-				"2": lambda :functions.create_csv(functions.star(),"2"),
-				"3": lambda :functions.create_csv(functions.bahadir_following_csv(),"3"),
+				"1": lambda: functions.create_csv(functions.github_data_csv(), "1"),
+				"2": lambda: functions.create_csv(functions.star(), "2"),
+				"3": lambda: functions.create_csv(functions.bahadir_following_csv(), "3"),
+				"4": lambda: print(functions.most_star()),
+				"5": lambda: print(functions.most_starred_repo()),
 				"q": self.quit
 			}
 
@@ -193,6 +204,8 @@ menu
 1.followers
 2.star
 3.following
+4.who scored the most stars
+5.most starred repo
 exit to q
     """)
 
