@@ -73,7 +73,7 @@ class Functions:
 			self.creates_csv()
 
 	def check_csv(self):
-		if os.path.isfile(fr"{os.getcwd()}/csv/{github_api.get_user_id()}.csv") == False:
+		if os.path.isfile(fr"{os.getcwd()}/csvs/{github_api.get_user_id()}.csv") == False:
 			print("creating csv file..")
 			self.creates_csv()
 			Main_Menu().asil()
@@ -113,12 +113,15 @@ class Functions:
 	def star(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
 		for i in github_api.get_api_star_info():
-			for j in i.get_stargazers_with_dates():
-				df = df.append({
-					"id": j.user.id,
-					"user_name": j.user.login,
-					"repo_name": i.name
-				}, ignore_index=True)
+			if i.name == "copilot-preview":
+				pass
+			else:
+				for j in i.get_stargazers_with_dates():
+					df = df.append({
+						"id": j.user.id,
+						"user_name": j.user.login,
+						"repo_name": i.name
+					}, ignore_index=True)
 		return df
 
 	def create_csv(self, df: pd.DataFrame, file_name: str) -> pd.DataFrame:
@@ -127,52 +130,65 @@ class Functions:
 		options = {"1": f"{id}_follower_info.csv", "2": f"{id}_stargazers_info.csv", "3": f"{id}_following.csv"}
 
 		def path():
-			print(os.getcwd())
 			return os.path.join(os.getcwd() + "\\csvs", options.get(file_name))
 
 		a = pd.read_csv(fr"{path()}")
+		# added incrementing index to a and  df
+		df.index = range(1, len(df) + 1)
+		a.index = range(1, len(a) + 1)
 		a = a.sort_values(by="id")
+		# fill nan value with zeros
 		df = df.fillna(0)
 		df = df.sort_values(by="id")
 		if df.equals(a):
-			print("no new followers")
+			print("no new changes detected")
 		elif pd.concat([a, df]).drop_duplicates(keep=False).empty:
-			print("no new followers")
+			print("no new changes detected")
 		else:
-
-			df1 = pd.concat([a, df]).drop_duplicates(keep=False)
-			print(df1.loc[df1["id"].isin(df1["id"].drop_duplicates(keep=False)) == False]
-				  .sort_values(by="id")
-				  .to_string(index=False))
-
-			print(df1, "difference", sep="\n")
+			# Find difference between two data frames
+			new_df = pd.concat([a, df]).drop_duplicates(keep=False)
+			# difference between new_df and a with new data frame with id numbers and user names with fill nan values with old values
+			added_df = new_df[~new_df.isin(a)].dropna(axis=0, how='all').fillna(a)
+			# print different added rows
+			print("new added users:", "no new users added" if added_df.empty else added_df, sep="\n")
+			# difference between new_df and df with new data frame with id numbers and user names with fill nan values with old values
+			removed_df = new_df[~new_df.isin(df)].dropna(axis=0, how='all').fillna(df)
+			# print different removed rows
+			print("new removed users:", "no new remowed users" if removed_df.empty else removed_df, sep="\n")
+			# asking if the old data frame will be updated
 			a = input("update data Y/N")
 			if a.upper() == "Y":
 				functions.creates_csv()
 			elif a.upper() == "N":
 				pass
 
-	def most_star(self):
+	def most_star(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
 		for i in github_api.get_api_star_info():
-			for j in i.get_stargazers_with_dates():
-				df = df.append({
-					"id": j.user.id,
-					"user_name": j.user.login,
-					"repo_name": i.name
-				}, ignore_index=True)
+			if i.name == "copilot-preview":
+				pass
+			else:
+				for j in i.get_stargazers_with_dates():
+					df = df.append({
+						"id": j.user.id,
+						"user_name": j.user.login,
+						"repo_name": i.name
+					}, ignore_index=True)
 
 		return df.groupby("user_name").count()["id"].sort_values(ascending=False)
 
-	def most_starred_repo(self):
+	def most_starred_repo(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
 		for i in github_api.get_api_star_info():
-			for j in i.get_stargazers_with_dates():
-				df = df.append({
-					"id": j.user.id,
-					"user_name": j.user.login,
-					"repo_name": i.name
-				}, ignore_index=True)
+			if i.name == "copilot-preview":
+				pass
+			else:
+				for j in i.get_stargazers_with_dates():
+					df = df.append({
+						"id": j.user.id,
+						"user_name": j.user.login,
+						"repo_name": i.name
+					}, ignore_index=True)
 
 		return df.groupby("repo_name").count()["id"].sort_values(ascending=False)
 
