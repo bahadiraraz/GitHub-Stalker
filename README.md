@@ -12,6 +12,19 @@
   
  <hr></hr>
  
+ # how to setup ?
+ 
+ - get your github api key in https://github.com/settings/tokens
+   ![image](https://user-images.githubusercontent.com/48323786/130633516-bcda1686-ab71-415c-8ecc-70408249eb3d.png)
+   - click generate new token and copy your API key
+ 
+ - Enter the api key when the program first opens
+   # ![image](https://user-images.githubusercontent.com/48323786/130633989-7e3a9579-4b60-406d-8273-5d1186cecfdd.png)
+have fun you can start using 😋
+
+ <hr></hr>
+ 
+ # showcase
  - who starred or unstarred your project 👾
    # ![image](https://user-images.githubusercontent.com/48323786/130631353-33810eda-3fa7-42b2-a581-2129b75d0b19.png)
    
