@@ -160,12 +160,19 @@ class Functions:
 			new_df = pd.concat([a, df]).drop_duplicates(keep=False)
 			# difference between new_df and a with new data frame with id numbers and user names with fill nan values with old values
 			added_df = new_df[~new_df.isin(a)].dropna(axis=0, how='all').fillna(a).reset_index().drop(columns=["index"])
-			added_df.columns = ["id","new added users"]
+			try:
+				added_df.columns = ["id","new added users"]
+			except ValueError:
+				added_df.columns = ["id", "new added users","repo_name"]
 			# print different added rows
 			print("no new users added" if added_df.empty else added_df, sep="\n")
+			print()
 			# difference between new_df and df with new data frame with id numbers and user names with fill nan values with old values
 			removed_df = new_df[~new_df.isin(df)].dropna(axis=0, how='all').fillna(df).reset_index().drop(columns=["index"])
-			removed_df.columns = ["id", "new removed users"]
+			try:
+				removed_df.columns = ["id", "new removed users"]
+			except ValueError:
+				removed_df.columns = ["id", "new removed users","repo_name"]
 			# print different removed rows
 			print("no new remowed users" if removed_df.empty else removed_df, sep="\n")
 			# asking if the old data frame will be updated
