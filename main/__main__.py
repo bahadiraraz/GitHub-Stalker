@@ -159,13 +159,15 @@ class Functions:
 			# Find difference between two data frames
 			new_df = pd.concat([a, df]).drop_duplicates(keep=False)
 			# difference between new_df and a with new data frame with id numbers and user names with fill nan values with old values
-			added_df = new_df[~new_df.isin(a)].dropna(axis=0, how='all').fillna(a)
+			added_df = new_df[~new_df.isin(a)].dropna(axis=0, how='all').fillna(a).reset_index().drop(columns=["index"])
+			added_df.columns = ["id","new added users"]
 			# print different added rows
-			print("new added users:", "no new users added" if added_df.empty else added_df, sep="\n")
+			print("no new users added" if added_df.empty else added_df, sep="\n")
 			# difference between new_df and df with new data frame with id numbers and user names with fill nan values with old values
-			removed_df = new_df[~new_df.isin(df)].dropna(axis=0, how='all').fillna(df)
+			removed_df = new_df[~new_df.isin(df)].dropna(axis=0, how='all').fillna(df).reset_index().drop(columns=["index"])
+			removed_df.columns = ["id", "new removed users"]
 			# print different removed rows
-			print("new removed users:", "no new remowed users" if removed_df.empty else removed_df, sep="\n")
+			print("no new remowed users" if removed_df.empty else removed_df, sep="\n")
 			# asking if the old data frame will be updated
 			a = input("update data Y/N")
 			if a.upper() == "Y":
@@ -185,8 +187,9 @@ class Functions:
 						"user_name": j.user.login,
 						"repo_name": i.name
 					}, ignore_index=True)
-
-		return df.groupby("user_name").count()["id"].sort_values(ascending=False)
+		a = df.groupby("user_name").count()["id"].sort_values(ascending=False).to_frame()
+		a.columns = ["star_count"]
+		return a.reset_index()
 
 	def most_starred_repo(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
@@ -201,7 +204,17 @@ class Functions:
 						"repo_name": i.name
 					}, ignore_index=True)
 
-		return df.groupby("repo_name").count()["id"].sort_values(ascending=False)
+		a=df.groupby("repo_name").count()["id"].sort_values(ascending=False).to_frame().reset_index()
+		a.columns = ["repo_name", "star_count"]
+		return a
+
+
+	def gt_info(self) -> pd.DataFrame:
+		a = self.github_data_csv().merge(self.bahadir_following_csv(), on="id", how="outer").drop_duplicates(
+			keep=False).fillna(0)
+		a = a[a["user_name_x"] == 0].drop(columns=["user_name_x"])
+		a.rename(columns={"user_name_y": "not follow back users"}, inplace=True)
+		return a.reset_index().drop(columns=["index"])
 
 
 functions = Functions()
@@ -215,8 +228,9 @@ class Main_Menu:
 				"1": lambda: functions.create_csv(functions.github_data_csv(), "1"),
 				"2": lambda: functions.create_csv(functions.star(), "2"),
 				"3": lambda: functions.create_csv(functions.bahadir_following_csv(), "3"),
-				"4": lambda: print(functions.most_star()),
-				"5": lambda: print(functions.most_starred_repo()),
+				"4": lambda: print(functions.gt_info()),
+				"5": lambda: print(functions.most_star()),
+				"6": lambda: print(functions.most_starred_repo()),
 				"q": self.quit
 			}
 
@@ -226,8 +240,9 @@ menu
 1.followers
 2.star
 3.following
-4.who scored the most stars
-5.most starred repo
+4.Who doesn’t follow you back
+5.who scored the most stars
+6.most starred repo
 exit to q
     """)
 
