@@ -7,7 +7,7 @@
  - [x] find new followers or unfollowers
  - [x] find who got a star on your project or remove stars
  - [x] find who do you follow or unfollow
- - [x] Who doesn’t follow you back (new)
+ - [x] Who doesn’t follow you back `(new)`
  - [x] Who has given your repositories how many stars in total
  - [x] your most starred repositories
   
