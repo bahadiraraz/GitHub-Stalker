@@ -159,20 +159,20 @@ class Functions:
 			# Find difference between two data frames
 			new_df = pd.concat([a, df]).drop_duplicates(keep=False)
 			# difference between new_df and a with new data frame with id numbers and user names with fill nan values with old values
-			added_df = new_df[~new_df.isin(a)].dropna(axis=0, how='all').fillna(a).reset_index().drop(columns=["index"])
+			added_df = new_df[~new_df.isin(a)].dropna(axis=0, how='all').fillna(a).reset_index(drop=True)
 			try:
-				added_df.columns = ["id","new added users"]
+				added_df.columns = ["id", "new added users"]
 			except ValueError:
-				added_df.columns = ["id", "new added users","repo_name"]
+				added_df.columns = ["id", "new added users", "repo_name"]
 			# print different added rows
 			print("no new users added" if added_df.empty else added_df, sep="\n")
 			print()
 			# difference between new_df and df with new data frame with id numbers and user names with fill nan values with old values
-			removed_df = new_df[~new_df.isin(df)].dropna(axis=0, how='all').fillna(df).reset_index().drop(columns=["index"])
+			removed_df = new_df[~new_df.isin(df)].dropna(axis=0, how='all').fillna(df).reset_index(drop=True)
 			try:
 				removed_df.columns = ["id", "new removed users"]
 			except ValueError:
-				removed_df.columns = ["id", "new removed users","repo_name"]
+				removed_df.columns = ["id", "new removed users", "repo_name"]
 			# print different removed rows
 			print("no new remowed users" if removed_df.empty else removed_df, sep="\n")
 			# asking if the old data frame will be updated
@@ -211,17 +211,16 @@ class Functions:
 						"repo_name": i.name
 					}, ignore_index=True)
 
-		a=df.groupby("repo_name").count()["id"].sort_values(ascending=False).to_frame().reset_index()
+		a = df.groupby("repo_name").count()["id"].sort_values(ascending=False).to_frame().reset_index()
 		a.columns = ["repo_name", "star_count"]
 		return a
-
 
 	def gt_info(self) -> pd.DataFrame:
 		a = self.github_data_csv().merge(self.bahadir_following_csv(), on="id", how="outer").drop_duplicates(
 			keep=False).fillna(0)
 		a = a[a["user_name_x"] == 0].drop(columns=["user_name_x"])
 		a.rename(columns={"user_name_y": "not follow back users"}, inplace=True)
-		return a.reset_index().drop(columns=["index"])
+		return a.reset_index(drop=True)
 
 
 functions = Functions()
@@ -256,7 +255,7 @@ exit to q
 		def asil(self):
 			while True:
 				self.menu_goster()
-				secenek = input("sellect options: ")
+				secenek = input("select options: ")
 				dogrulama = self.secenek.get(secenek.lower())
 				if dogrulama:
 					dogrulama()
