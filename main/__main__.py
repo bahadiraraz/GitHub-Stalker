@@ -7,7 +7,7 @@ from github import Github
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 
-class github_api:
+class GithubApi:
 
 	def get_api_followers_info(self):
 		try:
@@ -55,7 +55,7 @@ class github_api:
 			raise "missing or incorrect API key"
 
 
-github_api = github_api()
+github_api = GithubApi()
 
 
 class Functions:
@@ -68,58 +68,58 @@ class Functions:
 
 	def creates_csv(self):
 		try:
-			self.bahdir_csv().to_csv(self.user_csv_path(), index=False)
-			self.github_data_csv().to_csv(self.user_followers_path(), index=False)
-			self.bahadir_following_csv().to_csv(self.user_following_path(), index=False)
-			self.star().to_csv(self.user_star_path(), index=False)
+			self.user_csv().to_csv(self.user_csv_path(), index=False)
+			self.user_followers_csv().to_csv(self.user_followers_path(), index=False)
+			self.user_following_csv().to_csv(self.user_following_path(), index=False)
+			self.user_star_csv().to_csv(self.user_star_path(), index=False)
 		except FileNotFoundError:
 			os.makedirs(f"{os.getcwd()}\\csvs")
 			self.creates_csv()
 
 	def update_csv(self, file_name: str):
-		a = {self.user_csv_path(): self.bahdir_csv(), self.user_followers_path(): self.github_data_csv(),
-			 self.user_following_path(): self.bahadir_following_csv(), self.user_star_path(): self.star()}
-		a[file_name].to_csv(file_name, index=False)
+		options = {self.user_csv_path(): self.user_csv(), self.user_followers_path(): self.user_followers_csv(),
+			 self.user_following_path(): self.user_following_csv(), self.user_star_path(): self.user_star_csv()}
+		options[file_name].to_csv(file_name, index=False)
 
 	def check_csv(self):
 		if os.path.isfile(fr"{os.getcwd()}/csvs/{github_api.get_user_id()}.csv") == False:
 			print("creating csv file..")
 			self.creates_csv()
-			Main_Menu().asil()
+			MainMenu().run()
 			return os.listdir()
 		else:
-			Main_Menu().asil()
+			MainMenu().run()
 
-	def bahdir_csv(self) -> pd.DataFrame:
-		bahadir_df = pd.DataFrame(columns=["id", "user_name"])
-		bahadir = github_api.get_user_info()
-		bahadir_df = bahadir_df.append({
-			"id": bahadir.id,
-			"user_name": bahadir.login,
+	def user_csv(self) -> pd.DataFrame:
+		user_df = pd.DataFrame(columns=["id", "user_name"])
+		user = github_api.get_user_info()
+		user_df = user_df.append({
+			"id": user.id,
+			"user_name": user.login,
 		}, ignore_index=True)
-		return bahadir_df
+		return user_df
 
-	def github_data_csv(self) -> pd.DataFrame:
+	def user_followers_csv(self) -> pd.DataFrame:
 		# create new dataframe
-		df2 = pd.DataFrame(columns=["id", "user_name"])
+		df = pd.DataFrame(columns=["id", "user_name"])
 		for i in github_api.get_api_followers_info():
-			df2 = df2.append({
+			df = df.append({
 				"id": i.id,
 				"user_name": i.login,
 			}, ignore_index=True)
 
-		return df2
+		return df
 
-	def bahadir_following_csv(self) -> pd.DataFrame:
-		df3 = pd.DataFrame(columns=["id", "user_name"])
+	def user_following_csv(self) -> pd.DataFrame:
+		df = pd.DataFrame(columns=["id", "user_name"])
 		for i in github_api.get_following_info():
-			df3 = df3.append({
+			df = df.append({
 				"id": i.id,
 				"user_name": i.login,
 			}, ignore_index=True)
-		return df3
+		return df
 
-	def star(self) -> pd.DataFrame:
+	def user_star_csv(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
 		for i in github_api.get_api_star_info():
 			if i.name == "copilot-preview":
@@ -134,7 +134,7 @@ class Functions:
 
 		return df
 
-	def create_csv(self, df: pd.DataFrame, file_name: str) -> pd.DataFrame:
+	def compare_csv(self, df: pd.DataFrame, file_name: str) -> pd.DataFrame:
 		id = github_api.get_user_id()
 
 		options = {"1": f"{id}_follower_info.csv", "2": f"{id}_stargazers_info.csv", "3": f"{id}_following.csv"}
@@ -143,9 +143,6 @@ class Functions:
 			return os.path.join(os.getcwd() + "\\csvs", options.get(file_name))
 
 		a = pd.read_csv(fr"{path()}")
-		# added incrementing index to a and  df
-		df.index = range(1, len(df) + 1)
-		a.index = range(1, len(a) + 1)
 		a = a.sort_values(by="id")
 		# fill nan value with zeros
 		df = df.fillna(0)
@@ -182,7 +179,7 @@ class Functions:
 			elif a.upper() == "N":
 				pass
 
-	def most_star(self) -> pd.DataFrame:
+	def most_starred_user(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
 		for i in github_api.get_api_star_info():
 			if i.name == "copilot-preview":
@@ -194,9 +191,9 @@ class Functions:
 						"user_name": j.user.login,
 						"repo_name": i.name
 					}, ignore_index=True)
-		a = df.groupby("user_name").count()["id"].sort_values(ascending=False).to_frame()
-		a.columns = ["star_count"]
-		return a.reset_index()
+		df = df.groupby("user_name").count()["id"].sort_values(ascending=False).to_frame()
+		df.columns = ["star_count"]
+		return df.reset_index()
 
 	def most_starred_repo(self) -> pd.DataFrame:
 		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
@@ -211,36 +208,36 @@ class Functions:
 						"repo_name": i.name
 					}, ignore_index=True)
 
-		a = df.groupby("repo_name").count()["id"].sort_values(ascending=False).to_frame().reset_index()
-		a.columns = ["repo_name", "star_count"]
-		return a
+		df = df.groupby("repo_name").count()["id"].sort_values(ascending=False).to_frame().reset_index()
+		df.columns = ["repo_name", "star_count"]
+		return df
 
 	def gt_info(self) -> pd.DataFrame:
-		a = self.github_data_csv().merge(self.bahadir_following_csv(), on="id", how="outer").drop_duplicates(
+		df = self.user_followers_csv().merge(self.user_following_csv(), on="id", how="outer").drop_duplicates(
 			keep=False).fillna(0)
-		a = a[a["user_name_x"] == 0].drop(columns=["user_name_x"])
-		a.rename(columns={"user_name_y": "not follow back users"}, inplace=True)
-		return a.reset_index(drop=True)
+		df = df[df["user_name_x"] == 0].drop(columns=["user_name_x"])
+		df.rename(columns={"user_name_y": "not follow back users"}, inplace=True)
+		return df.reset_index(drop=True)
 
 
 functions = Functions()
 
 
-class Main_Menu:
+class MainMenu:
 	try:
 
 		def __init__(self):
 			self.secenek = {
-				"1": lambda: functions.create_csv(functions.github_data_csv(), "1"),
-				"2": lambda: functions.create_csv(functions.star(), "2"),
-				"3": lambda: functions.create_csv(functions.bahadir_following_csv(), "3"),
+				"1": lambda: functions.compare_csv(functions.user_followers_csv(), "1"),
+				"2": lambda: functions.compare_csv(functions.user_star_csv(), "2"),
+				"3": lambda: functions.compare_csv(functions.user_following_csv(), "3"),
 				"4": lambda: print(functions.gt_info()),
-				"5": lambda: print(functions.most_star()),
+				"5": lambda: print(functions.most_starred_user()),
 				"6": lambda: print(functions.most_starred_repo()),
 				"q": self.quit
 			}
 
-		def menu_goster(self):
+		def show_menu(self):
 			print("""
 menu
 1.followers
@@ -252,15 +249,15 @@ menu
 exit to q
     """)
 
-		def asil(self):
+		def run(self):
 			while True:
-				self.menu_goster()
-				secenek = input("select options: ")
-				dogrulama = self.secenek.get(secenek.lower())
-				if dogrulama:
-					dogrulama()
+				self.show_menu()
+				options = input("select options: ")
+				check_options = self.secenek.get(options.lower())
+				if check_options:
+					check_options()
 				else:
-					print(rf"{secenek} wrong options")
+					print(rf"{options} wrong options")
 
 		def quit(self):
 			print("byyy")
@@ -284,7 +281,7 @@ exit to q
 			self.main()
 
 
-main_menu = Main_Menu()
+main_menu = MainMenu()
 
 if __name__ == "__main__":
 	main_menu.main()
