@@ -174,7 +174,7 @@ class Functions:
 
 		:returns: A dataframe
 		"""
-		df = pd.DataFrame(columns=["id", "user_name", "repo_name"])
+		df = pd.DataFrame(columns=["id", "forker_name", "repo_name"])
 		for i in github_api.get_api_star_info():
 			if i.name == "copilot-preview":
 				pass
@@ -330,6 +330,7 @@ class MainMenu:
 				"4": lambda: print(functions.gt_info()),
 				"5": lambda: print(functions.most_starred_user()),
 				"6": lambda: print(functions.most_starred_repo()),
+				"7": lambda: print(functions.user_fork_csv()),
 				"q": self.quit
 			}
 
@@ -345,6 +346,7 @@ menu
 4.Who doesn’t follow you back
 5.who scored the most stars
 6.most starred repo
+7.who forked your repos
 exit to q
     """)
 
