@@ -28,7 +28,7 @@ class GithubApi:
 		try:
 			github_api_info = Github(api_key)
 			github_api_info.get_user().login
-			return github_api_info.get_user().get_repos(visibility="public")
+			return github_api_info.get_user().get_repos(visibility="public",affiliation="owner")
 
 		except github.GithubException:
 			raise "missing or incorrect API key"
@@ -76,10 +76,10 @@ github_api = GithubApi()
 class Functions:
 
 	def __init__(self):
-		self.user_csv_path = lambda: f"{os.getcwd()}\\csvs\\{github_api.get_user_id()}.csv"
-		self.user_followers_path = lambda: f"{os.getcwd()}\\csvs\\{github_api.get_user_id()}_follower_info.csv"
-		self.user_following_path = lambda: f"{os.getcwd()}\\csvs\\{github_api.get_user_id()}_following.csv"
-		self.user_star_path = lambda: f"{os.getcwd()}\\csvs\\{github_api.get_user_id()}_stargazers_info.csv"
+		self.user_csv_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_follower_info.csv")
+		self.user_followers_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_follower_info.csv")
+		self.user_following_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_following.csv")
+		self.user_star_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_stargazers_info.csv")
 
 	def creates_csv(self) -> None:
 		"""
@@ -94,7 +94,7 @@ class Functions:
 			self.user_following_csv().to_csv(self.user_following_path(), index=False)
 			self.user_star_csv().to_csv(self.user_star_path(), index=False)
 		except FileNotFoundError:
-			os.makedirs(f"{os.getcwd()}\\csvs")
+			os.makedirs(os.path.abspath(f"{os.getcwd()}/csvs"))
 			self.creates_csv()
 
 	def update_csv(self, file_name: str) -> None:
@@ -221,9 +221,9 @@ class Functions:
 		options = {"1": f"{id}_follower_info.csv", "2": f"{id}_stargazers_info.csv", "3": f"{id}_following.csv"}
 
 		def path() -> os.path:
-			return os.path.join(os.getcwd() + "\\csvs", options.get(file_name))
+			return os.path.abspath(os.path.join(rf"{os.getcwd()}/csvs", options.get(file_name)))
 
-		a = pd.read_csv(fr"{path()}")
+		a = pd.read_csv(path())
 		a = a.sort_values(by="id")
 		# fill nan value with zeros
 		df = df.fillna(0)
@@ -376,7 +376,7 @@ exit to q
 		:return:
 		"""
 		try:
-			if os.path.isfile(f"{os.getcwd()}/env/.env"):
+			if os.path.isfile(fr"{os.getcwd()}/env/.env"):
 				pass
 			else:
 				r = os.open("env/.env", os.O_CREAT | os.O_WRONLY)
