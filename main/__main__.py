@@ -76,7 +76,7 @@ github_api = GithubApi()
 class Functions:
 
 	def __init__(self):
-		self.user_csv_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_follower_info.csv")
+		self.user_csv_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}.csv")
 		self.user_followers_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_follower_info.csv")
 		self.user_following_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_following.csv")
 		self.user_star_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_stargazers_info.csv")
