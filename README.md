@@ -9,6 +9,7 @@
  - [x] find who do you follow or unfollow
  - [x] Who doesn’t follow you back `(new)`
  - [x] Who has given your repositories how many stars in total
+ - [x] who forked your repos 
  - [x] your most starred repositories
   
  <hr></hr>
