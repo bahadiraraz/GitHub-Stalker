@@ -6,7 +6,8 @@ from github import Github
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
-
+load_dotenv(dotenv_path=os.path.abspath(fr"{os.getcwd()}\env\.env"))
+api_key = os.environ['API_KEY']
 class GithubApi:
 
 	def get_api_followers_info(self):
@@ -28,7 +29,7 @@ class GithubApi:
 		try:
 			github_api_info = Github(api_key)
 			github_api_info.get_user().login
-			return github_api_info.get_user().get_repos(visibility="public",affiliation="owner")
+			return github_api_info.get_user().get_repos(visibility="public", affiliation="owner")
 
 		except github.GithubException:
 			raise "missing or incorrect API key"
@@ -73,13 +74,16 @@ class GithubApi:
 github_api = GithubApi()
 
 
-class Functions:
+class Functions():
 
 	def __init__(self):
 		self.user_csv_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}.csv")
-		self.user_followers_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_follower_info.csv")
-		self.user_following_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_following.csv")
-		self.user_star_path = lambda: os.path.abspath(f"{os.getcwd()}/csvs/{github_api.get_user_id()}_stargazers_info.csv")
+		self.user_followers_path = lambda: os.path.abspath(
+			f"{os.getcwd()}/csvs/{github_api.get_user_id()}_follower_info.csv")
+		self.user_following_path = lambda: os.path.abspath(
+			f"{os.getcwd()}/csvs/{github_api.get_user_id()}_following.csv")
+		self.user_star_path = lambda: os.path.abspath(
+			f"{os.getcwd()}/csvs/{github_api.get_user_id()}_stargazers_info.csv")
 
 	def creates_csv(self) -> None:
 		"""
@@ -87,7 +91,6 @@ class Functions:
 
 		:return: None
 		"""
-
 		try:
 			self.user_csv().to_csv(self.user_csv_path(), index=False)
 			self.user_followers_csv().to_csv(self.user_followers_path(), index=False)
@@ -393,6 +396,6 @@ main_menu = MainMenu()
 
 if __name__ == "__main__":
 	main_menu.main()
-	load_dotenv(dotenv_path="env/.env")
+	load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
 	api_key = os.environ['API_KEY']
 	functions.check_csv()
