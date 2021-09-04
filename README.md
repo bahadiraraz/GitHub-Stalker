@@ -24,6 +24,7 @@
    - select the options shown above
  
  - Enter the api key when the program first opens
+ - open cmd in GitHub-Stalker folder and type pip install -r requirements.txt
    # ![image](https://user-images.githubusercontent.com/48323786/130633989-7e3a9579-4b60-406d-8273-5d1186cecfdd.png)
 have fun you can start using 😋
 
