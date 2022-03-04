@@ -257,7 +257,7 @@ class Functions():
 			# print different removed rows
 			print("no new remowed users" if removed_df.empty else removed_df, sep="\n")
 			# asking if the old data frame will be updated
-			a = input("update data Y/N")
+			a = input("update data Y/N :")
 			if a.upper() == "Y":
 				functions.update_csv(path())
 			elif a.upper() == "N":
