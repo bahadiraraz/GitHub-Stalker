@@ -337,40 +337,42 @@ class MainMenu:
 				"5": lambda: print(functions.most_starred_user()),
 				"6": lambda: print(functions.most_starred_repo()),
 				"7": lambda: print(functions.user_fork_csv()),
-				"q": self.quit
+				"8": self.quit
 			}
 
-		def show_menu(self):
+		def menu(self) -> str:
+			"""This creates a interactive selection list.
+
+			Returns:
+				str: Number of the selected option as a string
 			"""
-			This function print main menu
-			"""
-			print("""
-menu
-1.followers
-2.star
-3.following
-4.Who doesn’t follow you back
-5.who scored the most stars
-6.most starred repo
-7.who forked your repos
-exit to q
-    """)
+			title = "select a option"
+			options = [
+				'1. followers',
+				'2. star',
+				'3. following',
+				'4. Who doesn’t follow you back',
+				'5. Who scored the most stars',
+				'6. most starred repo',
+				'7. who forked your repos',
+				'8. exit'
+			]
+			option, index = pick(options, title)
+			
+			return str(index + 1)
 
 		def run(self):
 			"""
 			This function run main menu loop
 			"""
 			while True:
-				#title = "Main Menu"
-				#options = ['followers', 'star', 'following', 'gt', 'most starred user', 'most starred repo', 'fork','exit']
-				#index =pick(options,title)[1]
-				self.show_menu()
-				options = input("select options: ")
-				check_options = self.secenek.get(options.lower())
+				check_options = self.secenek.get(self.menu())
 				if check_options:
 					check_options()
 				else:
-					print(rf"{options} wrong options")
+					pass
+				
+				input("Press enter to continue . . .")
 
 		def quit(self):
 			print("byyy")
