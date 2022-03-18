@@ -401,7 +401,10 @@ exit to q
 main_menu = MainMenu()
 
 if __name__ == "__main__":
-	main_menu.main()
-	load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
-	api_key = os.environ['API_KEY']
-	functions.check_csv()
+	try:
+		main_menu.main()
+		load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
+		api_key = os.environ['API_KEY']
+		functions.check_csv()
+	except KeyboardInterrupt:
+		print("\nUser interrupt detected. Exit program . . .")
