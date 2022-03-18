@@ -1,77 +1,10 @@
 import os, sys
-import github.GithubException
 import pandas as pd
-from dotenv import load_dotenv
-from github import Github
 from pick import pick
+from dotenv import load_dotenv
+from modules.github_api import GithubApi
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
-
-
-class GithubApi:
-
-	def get_api_followers_info(self):
-		"""
-		This function get user followers info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().get_followers()
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_api_star_info(self):
-		"""
-		This function get user star info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().get_repos(visibility="public", affiliation="owner")
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_user_info(self):
-		"""
-		This function get user info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user()
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_following_info(self):
-		"""
-		This function get user following info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().get_following()
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_user_id(self):
-		"""
-		This function get user id info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().id
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-
-github_api = GithubApi()
 
 
 class Functions():
@@ -337,40 +270,42 @@ class MainMenu:
 				"5": lambda: print(functions.most_starred_user()),
 				"6": lambda: print(functions.most_starred_repo()),
 				"7": lambda: print(functions.user_fork_csv()),
-				"q": self.quit
+				"8": self.quit
 			}
 
-		def show_menu(self):
+		def menu(self) -> str:
+			"""This creates a interactive selection list.
+
+			Returns:
+				str: Number of the selected option as a string
 			"""
-			This function print main menu
-			"""
-			print("""
-menu
-1.followers
-2.star
-3.following
-4.Who doesn’t follow you back
-5.who scored the most stars
-6.most starred repo
-7.who forked your repos
-exit to q
-    """)
+			title = "select a option"
+			options = [
+				'1. followers',
+				'2. star',
+				'3. following',
+				'4. Who doesn’t follow you back',
+				'5. Who scored the most stars',
+				'6. most starred repo',
+				'7. who forked your repos',
+				'8. exit'
+			]
+			option, index = pick(options, title)
+			
+			return str(index + 1)
 
 		def run(self):
 			"""
 			This function run main menu loop
 			"""
 			while True:
-				#title = "Main Menu"
-				#options = ['followers', 'star', 'following', 'gt', 'most starred user', 'most starred repo', 'fork','exit']
-				#index =pick(options,title)[1]
-				self.show_menu()
-				options = input("select options: ")
-				check_options = self.secenek.get(options.lower())
+				check_options = self.secenek.get(self.menu())
 				if check_options:
 					check_options()
 				else:
-					print(rf"{options} wrong options")
+					pass
+				
+				input("Press enter to continue . . .")
 
 		def quit(self):
 			print("byyy")
@@ -401,7 +336,12 @@ exit to q
 main_menu = MainMenu()
 
 if __name__ == "__main__":
-	main_menu.main()
-	load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
-	api_key = os.environ['API_KEY']
-	functions.check_csv()
+	try:
+		load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
+		api_key = os.environ['API_KEY']
+		github_api = GithubApi(api_key)
+		
+		main_menu.main()
+		functions.check_csv()
+	except KeyboardInterrupt:
+		print("\nUser interrupt detected. Exit program . . .")
