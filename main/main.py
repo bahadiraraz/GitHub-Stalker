@@ -7,8 +7,7 @@ from pick import pick
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
-load_dotenv(dotenv_path=os.path.abspath(fr"{os.getcwd()}\env\.env"))
-api_key = os.environ['API_KEY']
+
 class GithubApi:
 
 	def get_api_followers_info(self):
@@ -98,6 +97,9 @@ class Functions():
 			self.user_following_csv().to_csv(self.user_following_path(), index=False)
 			self.user_star_csv().to_csv(self.user_star_path(), index=False)
 		except FileNotFoundError:
+			os.makedirs(os.path.abspath(f"{os.getcwd()}/csvs"))
+			self.creates_csv()
+		except OSError:
 			os.makedirs(os.path.abspath(f"{os.getcwd()}/csvs"))
 			self.creates_csv()
 
