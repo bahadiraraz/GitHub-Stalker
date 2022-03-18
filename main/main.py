@@ -1,77 +1,10 @@
 import os, sys
-import github.GithubException
 import pandas as pd
-from dotenv import load_dotenv
-from github import Github
 from pick import pick
+from dotenv import load_dotenv
+from modules.github_api import GithubApi
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
-
-
-class GithubApi:
-
-	def get_api_followers_info(self):
-		"""
-		This function get user followers info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().get_followers()
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_api_star_info(self):
-		"""
-		This function get user star info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().get_repos(visibility="public", affiliation="owner")
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_user_info(self):
-		"""
-		This function get user info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user()
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_following_info(self):
-		"""
-		This function get user following info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().get_following()
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-	def get_user_id(self):
-		"""
-		This function get user id info from GitHub REST API
-		"""
-		try:
-			github_api_info = Github(api_key)
-			github_api_info.get_user().login
-			return github_api_info.get_user().id
-
-		except github.GithubException:
-			raise "missing or incorrect API key"
-
-
-github_api = GithubApi()
 
 
 class Functions():
@@ -404,9 +337,11 @@ main_menu = MainMenu()
 
 if __name__ == "__main__":
 	try:
-		main_menu.main()
 		load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
 		api_key = os.environ['API_KEY']
+		github_api = GithubApi(api_key)
+		
+		main_menu.main()
 		functions.check_csv()
 	except KeyboardInterrupt:
 		print("\nUser interrupt detected. Exit program . . .")
