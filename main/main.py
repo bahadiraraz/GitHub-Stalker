@@ -3,6 +3,7 @@ import github.GithubException
 import pandas as pd
 from dotenv import load_dotenv
 from github import Github
+from pick import pick
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
@@ -358,6 +359,9 @@ exit to q
 			This function run main menu loop
 			"""
 			while True:
+				#title = "Main Menu"
+				#options = ['followers', 'star', 'following', 'gt', 'most starred user', 'most starred repo', 'fork','exit']
+				#index =pick(options,title)[1]
 				self.show_menu()
 				options = input("select options: ")
 				check_options = self.secenek.get(options.lower())
