@@ -1,5 +1,9 @@
+![Pandas](https://img.shields.io/badge/Pandas-1.3.5-blue)
+![Github Api](https://img.shields.io/badge/Github%20Api-v1.55-informational)
+
 ## GitHub-Stalker
  track your github statistics 👀
+
 # features
 
  <hr></hr>
