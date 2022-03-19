@@ -306,7 +306,12 @@ class MainMenu:
 					pass
 				
 				input("Press enter to continue . . .")
-				os.system("cls")
+				if sys.platform in ["Darwin","linux"]:
+					os.system("clear")
+				elif sys.platform == "win32":
+					os.system("cls")
+				else:
+					os.system("clear")
 
 		def quit(self):
 			print("byyy")
