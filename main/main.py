@@ -306,7 +306,7 @@ class MainMenu:
 					pass
 				
 				input("Press enter to continue . . .")
-				os.system("clear")
+				os.system("cls")
 
 		def quit(self):
 			print("byyy")
