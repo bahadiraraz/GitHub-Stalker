@@ -320,10 +320,10 @@ class MainMenu:
 		:return:
 		"""
 		try:
-			if os.path.isfile(fr"{os.getcwd()}/env/.env"):
+			if os.path.isfile(os.path.abspath(fr"{os.getcwd()}/env/.env")):
 				pass
 			else:
-				r = os.open("env/.env", os.O_CREAT | os.O_WRONLY)
+				r = os.open(os.path.abspath(fr"{os.getcwd()}/env/.env"), os.O_CREAT | os.O_WRONLY)
 				key = input("api_key: ")
 				os.write(r, f"API_KEY={key}".encode())
 				os.close(r)
@@ -333,12 +333,13 @@ class MainMenu:
 			self.main()
 
 
+
 main_menu = MainMenu()
 
 if __name__ == "__main__":
 	try:
 		main_menu.main()
-		load_dotenv(dotenv_path=os.path.abspath(f"env\.env"))
+		load_dotenv(dotenv_path=os.path.abspath(fr"{os.getcwd()}/env/.env"))
 		api_key = os.environ['API_KEY']
 		github_api = GithubApi(api_key)
 		functions.check_csv()
